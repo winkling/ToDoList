@@ -29,7 +29,7 @@ namespace TodoApi
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-            services.AddDbContext<TodoContext>(opt => opt.UseSqlite(Configuration.GetConnectionString("DbContext")));
+            services.AddDbContext<TodoContext>(opt => opt.UseSqlite(Configuration.GetConnectionString("SQLiteDbContext")));
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
