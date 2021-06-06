@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
+using Microsoft.Extensions.Logging;
 
 namespace TodoApi.Controllers
 {
@@ -14,16 +15,20 @@ namespace TodoApi.Controllers
     public class TodoItemsController : ControllerBase
     {
         private readonly TodoContext _context;
+        private readonly ILogger<TodoItemsController> _logger;
 
-        public TodoItemsController(TodoContext context)
+        public TodoItemsController(TodoContext context, ILogger<TodoItemsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/TodoItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
         {
+            _logger.LogInformation("GetTodoItems");
+
             return await _context.TodoItems.ToListAsync();
         }
 
@@ -31,6 +36,8 @@ namespace TodoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
         {
+            _logger.LogInformation("GetTodoItem, id={0}", id);
+
             var todoItem = await _context.TodoItems.FindAsync(id);
 
             if (todoItem == null)
@@ -46,6 +53,8 @@ namespace TodoApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
         {
+            _logger.LogInformation("PutTodoItem, id={0}", id);
+
             if (id != todoItem.Id)
             {
                 return BadRequest();
@@ -75,9 +84,10 @@ namespace TodoApi.Controllers
         // POST: api/TodoItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TodoItem>>
-        PostTodoItem(TodoItem todoItem)
+        public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
+            _logger.LogInformation("PostTodoItem"); 
+
             _context.TodoItems.Add (todoItem);
             await _context.SaveChangesAsync();
 
@@ -88,6 +98,8 @@ namespace TodoApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
+            _logger.LogInformation("DeleteTodoItem, id={0}", id); 
+
             var todoItem = await _context.TodoItems.FindAsync(id);
             if (todoItem == null)
             {
